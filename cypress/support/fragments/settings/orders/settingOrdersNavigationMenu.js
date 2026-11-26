@@ -1,4 +1,4 @@
-import { NavListItem } from '../../../../../interactors';
+import { NavList, NavListItem } from '../../../../../interactors';
 
 export default {
   selectApprovals: () => {
@@ -9,6 +9,15 @@ export default {
   },
   selectOrderTemplates: () => {
     cy.do(NavListItem('Order templates').click());
+  },
+  selectOrderEmailTemplates: () => {
+    cy.do(NavListItem('Order email templates').click());
+  },
+  verifyOrderEmailTemplatesMenuItemInGeneralGroup: () => {
+    cy.expect([
+      NavList({ title: 'General' }).find(NavListItem('Order email templates')).exists(),
+      NavListItem('Order templates').exists(),
+    ]);
   },
   selectPurchaseOrderLinesLimit: () => {
     cy.do(NavListItem('Purchase order lines limit').click());
