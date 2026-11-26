@@ -5,6 +5,7 @@ import {
   Button,
   DropdownMenu,
   KeyValue,
+  Modal,
   NavListItem,
   Pane,
   TextArea,
@@ -24,9 +25,13 @@ const ACCORDION_LABELS = {
   TEMPLATE_CONTENT: 'Template content',
 };
 const ACTIONS_MENU_OPTIONS = ['Duplicate', COMMON_BUTTON_LABELS.EDIT, COMMON_BUTTON_LABELS.DELETE];
+const DELETE_MODAL_TITLE = 'Delete Order email template';
 
 const listPane = Pane('Order email templates');
 const actionsButton = Button(COMMON_BUTTON_LABELS.ACTIONS);
+const deleteModal = Modal(DELETE_MODAL_TITLE);
+const deleteModalCancelButton = deleteModal.find(Button(COMMON_BUTTON_LABELS.CANCEL));
+const deleteModalDeleteButton = deleteModal.find(Button(COMMON_BUTTON_LABELS.DELETE));
 
 const getDetailPane = (templateName) => Pane(templateName);
 const getAccordion = (templateName, label) => getDetailPane(templateName).find(Accordion(label));
@@ -160,5 +165,24 @@ export default {
         expect(menu.querySelectorAll('button')).to.have.length(ACTIONS_MENU_OPTIONS.length);
       }),
     );
+  },
+
+  selectDeleteInActionsMenu() {
+    cy.do(DropdownMenu().find(Button(COMMON_BUTTON_LABELS.DELETE)).click());
+  },
+
+  // "Delete" button has keyboard focus when the modal opens
+  verifyDeleteModal(templateName) {
+    cy.expect([
+      deleteModal.exists(),
+      deleteModal.has({ message: including(`${templateName} will be removed`) }),
+      deleteModalCancelButton.exists(),
+      deleteModalDeleteButton.has({ focused: true }),
+    ]);
+  },
+
+  cancelDeleteModal() {
+    cy.do(deleteModalCancelButton.click());
+    cy.expect(deleteModal.absent());
   },
 };
